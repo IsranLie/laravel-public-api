@@ -17,7 +17,6 @@ class PostController extends Controller
         $data = [];
 
         try {
-            // Cache users 1 jam
             $users = Cache::remember('jsonplaceholder_users', 3600, function () {
                 return Http::retry(3, 200)
                     ->get('https://jsonplaceholder.typicode.com/users')
@@ -25,15 +24,13 @@ class PostController extends Controller
                     ->json();
             });
 
-            // Ambil semua posts
-            $posts = Cache::remember('jsonplaceholder_all_posts', 3600, function () { // Cache all posts too
+            $posts = Cache::remember('jsonplaceholder_all_posts', 3600, function () {
                 return Http::retry(3, 200)
                     ->get('https://jsonplaceholder.typicode.com/posts')
                     ->throw()
                     ->json();
             });
 
-            // Ambil semua comments
             $allComments = Cache::remember('jsonplaceholder_all_comments', 3600, function () {
                 return Http::retry(3, 200)
                     ->get('https://jsonplaceholder.typicode.com/comments')
@@ -55,6 +52,7 @@ class PostController extends Controller
                     $commentCount = $commentCounts->get($post['id'], 0);
 
                     return array_merge($post, [
+                        'author_id'     => $user['id'] ?? 'Unknown',
                         'author_name'     => $user['name'] ?? 'Unknown',
                         'author_username' => $user['username'] ?? 'Unknown',
                         'comment_count'   => $commentCount,
@@ -62,7 +60,7 @@ class PostController extends Controller
                     ]);
                 });
 
-            // PAGINATION MANUAL
+            // PAGINATION
             $perPage = 10;
             $currentPage = request()->get('page', 1);
             $currentItems = $allData->slice(($currentPage - 1) * $perPage, $perPage)->values();
@@ -84,34 +82,38 @@ class PostController extends Controller
     {
         $title = "Post Detail";
         $postData = null;
+        $comments = [];
 
         try {
-            // Cache users 1 hour
-            $users = Cache::remember('jsonplaceholder_users', 3600, function () {
+            // Get single post
+            $post = Cache::remember("jsonplaceholder_post_{$id}", 3600, function () use ($id) {
                 return Http::retry(3, 200)
-                    ->get('https://jsonplaceholder.typicode.com/users')
+                    ->get("https://jsonplaceholder.typicode.com/posts/{$id}")
                     ->throw()
                     ->json();
             });
 
-            // Get a single post by ID
-            $post = Http::retry(3, 200)
-                ->get('https://jsonplaceholder.typicode.com/posts/' . $id)
-                ->throw()
-                ->json();
+            if (!$post || !isset($post['userId'])) {
+                abort(404, 'Post not found');
+            }
 
-            // Get comments for the specific post ID
-            $comments = Cache::remember('jsonplaceholder_comments_post_' . $id, 3600, function () use ($id) {
+            // Get post author
+            $user = Cache::remember("jsonplaceholder_user_{$post['userId']}", 3600, function () use ($post) {
                 return Http::retry(3, 200)
-                    ->get('https://jsonplaceholder.typicode.com/posts/' . $id . '/comments')
+                    ->get("https://jsonplaceholder.typicode.com/users/{$post['userId']}")
                     ->throw()
                     ->json();
             });
 
-            $usersById = collect($users)->keyBy('id');
+            // Get comments
+            $comments = Cache::remember("jsonplaceholder_comments_post_{$id}", 3600, function () use ($id) {
+                return Http::retry(3, 200)
+                    ->get("https://jsonplaceholder.typicode.com/posts/{$id}/comments")
+                    ->throw()
+                    ->json();
+            });
 
-            // Merge author & image URL into the single post
-            $user = $usersById->get($post['userId']);
+            // Merge post + author + image
             $postData = array_merge($post, [
                 'author_name'     => $user['name'] ?? 'Unknown',
                 'author_username' => $user['username'] ?? 'Unknown',
@@ -119,9 +121,9 @@ class PostController extends Controller
             ]);
         } catch (RequestException $e) {
             Log::error("HTTP Request gagal: " . $e->getMessage());
+            abort(500, "Gagal memuat data.");
         }
 
-        // Pass the single post data to the view
         return view('post_detail', compact('title', 'postData', 'comments'));
     }
 }

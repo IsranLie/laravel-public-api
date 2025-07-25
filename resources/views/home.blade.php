@@ -56,7 +56,7 @@
                         class="block"
                     >
                         <h3
-                            class="text-xl font-semibold text-custom-red-950 dark:text-custom-red-100 capitalize mb-2 line-clamp-2"
+                            class="text-xl font-extrabold text-custom-red-950 dark:text-custom-red-300 capitalize mb-2 line-clamp-2"
                         >
                             {{ $post["id"] }}. {{ $post["title"] }}
                         </h3>
@@ -83,7 +83,7 @@
                         <span
                             class="text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 cursor-pointer"
                         >
-                            <i class="ri-heart-line"></i>
+                            <i class="ri-chat-1-line"></i>
                             {{ $post["comment_count"] }}
                         </span>
                         <span

@@ -1,4 +1,36 @@
 @extends('app') @section('content')
+<nav
+    class="flex items-center text-md text-gray-600 dark:text-gray-300 mb-2 ml-2 md:ml-0"
+    aria-label="Breadcrumb"
+>
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+            <a
+                href="{{ url('/') }}"
+                class="inline-flex items-center hover:text-custom-red-500"
+            >
+                Home
+            </a>
+        </li>
+        <li>
+            <div class="flex items-center">
+                <i class="ri-arrow-right-s-line mx-1 text-gray-400"></i>
+                <a href="{{ route('posts') }}" class="hover:text-custom-red-500"
+                    >Posts</a
+                >
+            </div>
+        </li>
+        <li aria-current="page">
+            <div class="flex items-center">
+                <i class="ri-arrow-right-s-line mx-1 text-gray-400"></i>
+                <span class="text-gray-400 dark:text-gray-500"
+                    >Post Detail</span
+                >
+            </div>
+        </li>
+    </ol>
+</nav>
+
 <div
     class="mx-auto rounded-xl bg-white p-8 text-left shadow-lg dark:bg-gray-900"
 >
@@ -15,30 +47,34 @@
     </div>
 
     <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-            <img
-                src="https://picsum.photos/id/{{
-                    $postData['userId'] ?? '100'
-                }}/50/50"
-                alt="{{ $postData['author_name'] }}"
-                class="w-12 h-12 rounded-full object-cover border-2 border-custom-red-500"
-            />
-            <div>
-                <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                    {{ $postData["author_name"] }}
-                </p>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    <i class="ri-at-line w-6 h-6"></i
-                    >{{ $postData["author_username"] }}
-                </p>
+        <a href="{{ route('user.profile', ['id'=> $postData['userId']]) }}">
+            <div class="flex items-center space-x-3">
+                <img
+                    src="https://picsum.photos/id/{{
+                        $postData['userId'] ?? '100'
+                    }}/50/50"
+                    alt="{{ $postData['author_name'] }}"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-custom-red-500"
+                />
+                <div>
+                    <p
+                        class="text-lg font-semibold text-gray-900 dark:text-white"
+                    >
+                        {{ $postData["author_name"] }}
+                    </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <i class="ri-at-line w-6 h-6"></i
+                        >{{ $postData["author_username"] }}
+                    </p>
+                </div>
             </div>
-        </div>
+        </a>
 
         <div class="flex items-center space-x-4">
             <button
                 class="flex items-center space-x-1 text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-200"
             >
-                <i class="ri-heart-line ri-xl"></i>
+                <i class="ri-chat-1-line ri-xl"></i>
                 <span class="text-sm">{{ count($comments) }}</span>
             </button>
             <button
@@ -92,12 +128,14 @@
         </p>
     </div>
 
-    <a
-        href="{{ route('posts') }}"
-        class="inline-block text-center w-[200px] border border-custom-red-300 hover:border-custom-red-950 hover:dark:border-custom-red-950 dark:border-custom-red-200 text-custom-red-950 dark:text-custom-red-300 rounded-full p-2 hover:text-custom-red-50 hover:dark:text-custom-red-100 hover:bg-custom-red-950 transition-colors duration-200"
-    >
-        See more posts
-    </a>
+    <div class="flex justify-center">
+        <a
+            href="{{ route('posts') }}"
+            class="inline-block text-center w-[200px] my-6 border border-custom-red-300 hover:border-custom-red-950 hover:dark:border-custom-red-950 dark:border-custom-red-200 text-custom-red-950 dark:text-custom-red-300 rounded-full p-2 hover:text-custom-red-50 hover:dark:text-custom-red-100 hover:bg-custom-red-950 transition-colors duration-200"
+        >
+            See more posts
+        </a>
+    </div>
 
     <div class="border-t border-gray-200 dark:border-gray-700 pt-8 mt-8">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
@@ -117,7 +155,7 @@
                         type="text"
                         name="name"
                         id="name"
-                        class="mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm focus:border-custom-red-500 focus:ring-custom-red-500 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-3 py-3"
+                        class="mt-1 block w-full md:w-1/2 rounded-md border-gray-300 shadow-sm focus:border-custom-red-500 focus:ring-custom-red-500 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-3 py-3"
                         placeholder="Your name"
                         required
                     />
@@ -133,7 +171,7 @@
                         type="email"
                         name="email"
                         id="email"
-                        class="mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm focus:border-custom-red-500 focus:ring-custom-red-500 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-3 py-3"
+                        class="mt-1 block w-full md:w-1/2 rounded-md border-gray-300 shadow-sm focus:border-custom-red-500 focus:ring-custom-red-500 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-3 py-3"
                         placeholder="Your email"
                         required
                     />
@@ -149,7 +187,7 @@
                         name="comment_body"
                         id="comment_body"
                         rows="2"
-                        class="mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm focus:border-custom-red-500 focus:ring-custom-red-500 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-3 py-3"
+                        class="mt-1 block w-full md:w-1/2 rounded-md border-gray-300 shadow-sm focus:border-custom-red-500 focus:ring-custom-red-500 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-3 py-3"
                         placeholder="Say something..."
                         required
                     ></textarea>

@@ -44,7 +44,7 @@
                 <span
                     class="text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 cursor-pointer"
                 >
-                    <i class="ri-heart-line"></i>
+                    <i class="ri-chat-1-line"></i>
                     {{ $post["comment_count"] }}
                 </span>
                 <span

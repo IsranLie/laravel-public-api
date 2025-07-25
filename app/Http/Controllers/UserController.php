@@ -13,11 +13,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $title = "Posts";
-        $data = [];
-
+        $title = "Users";
         try {
-            // Cache users 1 jam
             $users = Cache::remember('jsonplaceholder_users', 3600, function () {
                 return Http::retry(3, 200)
                     ->get('https://jsonplaceholder.typicode.com/users')
@@ -25,43 +22,59 @@ class UserController extends Controller
                     ->json();
             });
 
-            // Ambil semua posts
+            $data = collect($users)->map(function ($user) {
+                $user['image_url'] = "https://picsum.photos/id/{$user['id']}/300/300";
+                return $user;
+            })->toArray();
+        } catch (RequestException $e) {
+            Log::error("HTTP Request gagal: " . $e->getMessage());
+            $data = [];
+        }
+
+        return view('user', compact('title', 'data'));
+    }
+
+    public function show($id)
+    {
+        $title = "User Profile";
+        $user = [];
+        $posts = [];
+        $commentCounts = [];
+
+        try {
+            $user = Cache::remember("jsonplaceholder_user_{$id}", 3600, function () use ($id) {
+                return Http::retry(3, 200)
+                    ->get("https://jsonplaceholder.typicode.com/users/{$id}")
+                    ->throw()
+                    ->json();
+            });
+            $user['image_url'] = "https://picsum.photos/id/{$user['id']}/300/300";
+
             $posts = Http::retry(3, 200)
-                ->get('https://jsonplaceholder.typicode.com/posts')
+                ->get("https://jsonplaceholder.typicode.com/users/{$id}/posts")
                 ->throw()
                 ->json();
 
-            $usersById = collect($users)->keyBy('id');
+            $comments = Cache::remember('jsonplaceholder_all_comments', 3600, function () {
+                return Http::retry(3, 200)
+                    ->get('https://jsonplaceholder.typicode.com/comments')
+                    ->throw()
+                    ->json();
+            });
 
-            // Gabungkan data author & image URL
-            $allData = collect($posts)
-                ->shuffle()
-                ->values()
-                ->map(function ($post) use ($usersById) {
-                    $user = $usersById->get($post['userId']);
-                    return array_merge($post, [
-                        'author_name'     => $user['name'] ?? 'Unknown',
-                        'author_username' => $user['username'] ?? 'Unknown',
-                        'image_url'       => "https://picsum.photos/id/{$post['id']}/400/300",
-                        // 'image_url'       => "https://picsum.photos/seed/{$post['id']}/400/300",
-                    ]);
-                });
+            $commentCounts = collect($comments)
+                ->groupBy('postId')
+                ->map(fn($group) => $group->count());
 
-            // PAGINATION MANUAL
-            $perPage = 10; // jumlah item per halaman
-            $currentPage = request()->get('page', 1);
-            $currentItems = $allData->slice(($currentPage - 1) * $perPage, $perPage)->values();
-            $data = new LengthAwarePaginator(
-                $currentItems,
-                $allData->count(),
-                $perPage,
-                $currentPage,
-                ['path' => request()->url()]
-            );
+            $posts = collect($posts)->map(function ($post) use ($commentCounts) {
+                $post['image_url'] = "https://picsum.photos/id/{$post['id']}/300/300";
+                $post['comment_count'] = $commentCounts[$post['id']] ?? 0;
+                return $post;
+            })->all();
         } catch (RequestException $e) {
             Log::error("HTTP Request gagal: " . $e->getMessage());
         }
 
-        return view('post', compact('title', 'data'));
+        return view('user_profile', compact('title', 'user', 'posts'));
     }
 }

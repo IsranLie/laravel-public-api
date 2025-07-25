@@ -64,8 +64,14 @@
                         Post
                     </a>
                     <a
-                        href="#user"
-                        class="text-custom-red-950 font-semibold dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600"
+                        href="{{ route('users') }}"
+                        class="font-semibold
+                        {{
+                            $title === 'Users' || $title === 'User Profile'
+                                ? 'active'
+                                : 'text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600'
+                        }}
+                        "
                     >
                         User
                     </a>
@@ -129,20 +135,41 @@
                 <!-- Navigasi -->
                 <nav class="flex flex-col space-y-3">
                     <a
-                        href="#home"
-                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600 border-b border-custom-red-50"
-                        >Home</a
+                        href="{{ route('/') }}"
+                        class="font-semibold border-b border-custom-red-50
+                        {{
+                            $title === ''
+                                ? 'active'
+                                : 'text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600'
+                        }}
+                        "
                     >
+                        Home
+                    </a>
                     <a
-                        href="#post"
-                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600 border-b border-custom-red-50"
-                        >Post</a
+                        href="{{ route('posts') }}"
+                        class="font-semibold border-b border-custom-red-50
+                        {{
+                            $title === 'Posts' || $title === 'Post Detail'
+                                ? 'active'
+                                : 'text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600'
+                        }}
+                        "
                     >
+                        Post
+                    </a>
                     <a
-                        href="#user"
-                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600 border-b border-custom-red-50"
-                        >User</a
+                        href="{{ route('users') }}"
+                        class="font-semibold border-b border-custom-red-50
+                        {{
+                            $title === 'Users' || $title === 'User Profile'
+                                ? 'active'
+                                : 'text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600'
+                        }}
+                        "
                     >
+                        User
+                    </a>
                 </nav>
             </div>
         </aside>
@@ -174,6 +201,6 @@
             rights reserved.
         </footer>
 
-        <!-- @yield('scripts') -->
+        @yield('scripts')
     </body>
 </html>

@@ -15,5 +15,5 @@ Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('/posts', [PostController::class, 'index'])->name('posts');
 Route::get('/post-detail/{id}', [PostController::class, 'show'])->name('post.detail');
 
-// Route::get('/users', [UserController::class, 'index'])->name('users');
-// Route::get('/user-detail/{id}', [UserController::class, 'show'])->name('user.detail');
+Route::get('/users', [UserController::class, 'index'])->name('users');
+Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');

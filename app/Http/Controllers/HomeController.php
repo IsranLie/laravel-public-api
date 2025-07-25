@@ -16,7 +16,7 @@ class HomeController extends Controller
         $data = [];
 
         try {
-            // Cache users 1 jam
+            // Cache users 1 hour
             $users = Cache::remember('jsonplaceholder_users', 3600, function () {
                 return Http::retry(3, 200)
                     ->get('https://jsonplaceholder.typicode.com/users')
@@ -24,13 +24,11 @@ class HomeController extends Controller
                     ->json();
             });
 
-            // Ambil semua posts
             $posts = Http::retry(3, 200)
                 ->get('https://jsonplaceholder.typicode.com/posts')
                 ->throw()
                 ->json();
 
-            // Ambil semua comments
             $allComments = Cache::remember('jsonplaceholder_all_comments', 3600, function () {
                 return Http::retry(3, 200)
                     ->get('https://jsonplaceholder.typicode.com/comments')
@@ -56,12 +54,11 @@ class HomeController extends Controller
                         'author_username' => $user['username'] ?? 'Unknown',
                         'comment_count'   => $commentCount,
                         'image_url'       => "https://picsum.photos/id/{$post['id']}/400/300",
-                        // 'image_url'       => "https://picsum.photos/seed/{$post['id']}/400/300",
                     ]);
                 });
 
-            // PAGINATION MANUAL
-            $perPage = 10; // jumlah item per halaman
+            // PAGINATION
+            $perPage = 10;
             $currentPage = request()->get('page', 1);
             $currentItems = $allData->slice(($currentPage - 1) * $perPage, $perPage)->values();
             $data = new LengthAwarePaginator(
