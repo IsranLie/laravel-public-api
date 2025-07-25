@@ -1,6 +1,6 @@
 @extends('app') @section('content')
 <div class="mx-auto rounded-xl bg-white p-8 text-left dark:bg-gray-900">
-    <div
+   <div
         class="flex flex-col md:flex-row items-center justify-between mb-10 space-y-4 md:space-y-0 md:space-x-4"
     >
         <form
@@ -31,77 +31,74 @@
         </button>
     </div>
 
-    <div class="mt-4 grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+    <div class="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         @foreach ($data as $post)
         <div
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition duration-300 flex flex-col md:flex-row h-full"
+            class="max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-lg transition flex flex-col"
         >
-            <div class="md:w-1/3 flex-shrink-0">
-                <!-- <a
-                    href="{{ route('post.detail', ['id' => $post['id']]) }}"
-                    class="block"
-                > -->
-                <img
-                    class="w-full h-full object-cover aspect-square"
-                    src="{{ $post['image_url'] }}"
-                    alt="Image {{ $post['id'] }}"
-                    onerror="this.onerror=null;this.src='https://placehold.co/300x300/E0E0E0/333333?text=Image+Not+Found';"
-                />
-                <!-- </a> -->
-            </div>
-            <div class="p-4 flex flex-col flex-grow md:w-2/3">
-                <div class="flex-grow">
-                    <a
-                        href="{{ route('post.detail', ['id' => $post['id']]) }}"
-                        class="block"
-                    >
-                        <h3
-                            class="text-xl font-semibold text-custom-red-950 dark:text-custom-red-100 capitalize mb-2 line-clamp-2"
-                        >
-                            {{ $post["id"] }}. {{ $post["title"] }}
-                        </h3>
-                        <p
-                            class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3"
-                        >
-                            {{ Str::limit($post['body'], 100, '... See more') }}
-                        </p>
-                    </a>
-                </div>
-                <div class="mt-4 flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
-                        <i
-                            class="ri-user-line text-gray-500 dark:text-gray-400"
-                        ></i>
-                        <span
-                            class="text-sm font-semibold text-custom-red-950 dark:text-custom-red-100 capitalize"
-                        >
-                            {{ $post["author_name"] }}
-                        </span>
-                    </div>
+            <img
+                class="w-full h-48 object-cover"
+                src="{{ $post['image_url'] }}"
+                alt="img {{ $post['id'] }}"
+                onerror="this.onerror=null;this.src='https://placehold.co/400x300/E0E0E0/333333?text=Image+Not+Found';"
+            />
 
-                    <div class="flex items-center space-x-3">
-                        <span
-                            class="text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 cursor-pointer"
-                        >
-                            <i class="ri-heart-line"></i>
-                            {{ $post["comment_count"] }}
-                        </span>
-                        <span
-                            class="text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 cursor-pointer"
-                        >
-                            <i class="ri-bookmark-line"></i>
-                        </span>
-                        <span
-                            class="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-300 cursor-pointer"
-                        >
-                            <i class="ri-share-line"></i>
-                        </span>
-                    </div>
+            <div class="p-4 flex flex-col flex-grow">
+                <div class="flex justify-end mb-2">
+                    <span
+                        class="inline-flex items-center gap-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md px-2 py-0.5 text-xs"
+                    >
+                        <a href="#" title="See Profile">
+                            <i class="ri-user-line"></i>
+                            {{ $post["author_name"] }}
+                        </a>
+                    </span>
                 </div>
+                <h3
+                    class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2"
+                >
+                    {{ $post["id"] }}.
+                    {{ $post["title"] }}
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm flex-grow">
+                    {{ Str::limit($post['body'], 100, '...') }}
+                </p>
+                <a
+                    href="{{ route('post.detail', ['id' => $post["id"]]) }}"
+                    class="mt-4 inline-flex items-center gap-1 bg-custom-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-custom-red-500 transition justify-center"
+                >
+                    Read More <i class="ri-arrow-right-line"></i>
+                </a>
             </div>
         </div>
         @endforeach
     </div>
+
+    <!-- <div class="mt-6 flex justify-center gap-2">
+        @if ($data->onFirstPage() === false)
+        <a
+            href="{{ $data->previousPageUrl() }}"
+            class="px-3 py-1 bg-gray-300 rounded"
+        >
+            Prev
+        </a>
+        @endif @foreach ($data->getUrlRange(1, $data->lastPage()) as $page =>
+        $url)
+        <a
+            href="{{ $url }}"
+            class="px-3 py-1 {{ $page == $data->currentPage() ? 'bg-custom-red-600 text-white' : 'bg-gray-300' }} rounded"
+        >
+            {{ $page }}
+        </a>
+        @endforeach @if ($data->hasMorePages())
+        <a
+            href="{{ $data->nextPageUrl() }}"
+            class="px-3 py-1 bg-gray-300 rounded"
+        >
+            Next
+        </a>
+        @endif
+    </div> -->
 
     @php $current = $data->currentPage(); $last = $data->lastPage(); @endphp
 

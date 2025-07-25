@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class HomeController extends Controller
+class UserController extends Controller
 {
     public function index()
     {
-        $title = "";
+        $title = "Posts";
         $data = [];
 
         try {
@@ -30,31 +31,17 @@ class HomeController extends Controller
                 ->throw()
                 ->json();
 
-            // Ambil semua comments
-            $allComments = Cache::remember('jsonplaceholder_all_comments', 3600, function () {
-                return Http::retry(3, 200)
-                    ->get('https://jsonplaceholder.typicode.com/comments')
-                    ->throw()
-                    ->json();
-            });
-
-            $commentCounts = collect($allComments)
-                ->groupBy('postId')
-                ->map(fn($group) => count($group));
-
             $usersById = collect($users)->keyBy('id');
 
+            // Gabungkan data author & image URL
             $allData = collect($posts)
                 ->shuffle()
                 ->values()
-                ->map(function ($post) use ($usersById, $commentCounts) {
+                ->map(function ($post) use ($usersById) {
                     $user = $usersById->get($post['userId']);
-                    $commentCount = $commentCounts->get($post['id'], 0);
-
                     return array_merge($post, [
                         'author_name'     => $user['name'] ?? 'Unknown',
                         'author_username' => $user['username'] ?? 'Unknown',
-                        'comment_count'   => $commentCount,
                         'image_url'       => "https://picsum.photos/id/{$post['id']}/400/300",
                         // 'image_url'       => "https://picsum.photos/seed/{$post['id']}/400/300",
                     ]);
@@ -75,6 +62,6 @@ class HomeController extends Controller
             Log::error("HTTP Request gagal: " . $e->getMessage());
         }
 
-        return view('home', compact('title', 'data'));
+        return view('post', compact('title', 'data'));
     }
 }

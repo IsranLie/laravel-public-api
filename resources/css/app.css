@@ -6,3 +6,19 @@
 html {
     scroll-behavior: smooth;
 }
+
+.active {
+    color: #e21212;
+}
+
+.active:hover {
+    color: #a41010;
+}
+
+html.dark .active {
+    color: #e21212;
+}
+
+html.dark .active:hover {
+    color: #ff6565;
+}

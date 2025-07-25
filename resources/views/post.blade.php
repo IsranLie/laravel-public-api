@@ -1,8 +1,22 @@
 @extends('app') @section('content')
 <div class="mx-auto rounded-xl bg-white p-8 text-left dark:bg-gray-900">
+    <!-- <h1 class="text-2xl text-custom-red-950 dark:text-custom-red-100 mb-6">
+        Posts 2
+    </h1> -->
+
+    <!-- Write , Search, Filter -->
     <div
         class="flex flex-col md:flex-row items-center justify-between mb-10 space-y-4 md:space-y-0 md:space-x-4"
     >
+        <a
+            href="#"
+            class="flex-shrink-0 bg-custom-red-600 hover:bg-custom-red-700 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center space-x-2"
+        >
+            <!-- <i class="ri-edit-box-line text-lg"></i> -->
+            <i class="ri-edit-line text-lg"></i>
+            <span>Write</span>
+        </a>
+
         <form
             action="{{ route('posts') }}"
             method="GET"
@@ -14,6 +28,7 @@
                 placeholder="Search posts..."
                 class="flex-grow py-2 px-4 focus:outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
                 value="{{ request('search') }}"
+                required
             />
             <button
                 type="submit"
@@ -95,6 +110,11 @@
                             class="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-300 cursor-pointer"
                         >
                             <i class="ri-share-line"></i>
+                        </span>
+                        <span
+                            class="text-gray-600 dark:text-gray-400 hover:text-green-500 hover:dark:text-green-500 cursor-pointer"
+                        >
+                            <i class="ri-more-fill"></i>
                         </span>
                     </div>
                 </div>

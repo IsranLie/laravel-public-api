@@ -5,7 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <link rel="icon" type="image/svg" href="{{ asset('img/fire.svg') }}" />
-        <title>{{ config("app.name") }}</title>
+        <title>
+            {{ $title ? $title.' | '. config("app.name") : config("app.name")}}
+        </title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -39,9 +41,27 @@
                 <nav class="hidden md:flex items-center space-x-6">
                     <a
                         href="{{ route('/') }}"
-                        class="text-custom-red-950 font-semibold dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600"
+                        class="font-semibold
+                        {{
+                            $title === ''
+                                ? 'active'
+                                : 'text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600'
+                        }}
+                        "
                     >
                         Home
+                    </a>
+                    <a
+                        href="{{ route('posts') }}"
+                        class="font-semibold
+                        {{
+                            $title === 'Posts' || $title === 'Post Detail'
+                                ? 'active'
+                                : 'text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600'
+                        }}
+                        "
+                    >
+                        Post
                     </a>
                     <a
                         href="#user"
@@ -49,17 +69,11 @@
                     >
                         User
                     </a>
-                    <a
-                        href="#album"
-                        class="text-custom-red-950 font-semibold dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600"
-                    >
-                        Album
-                    </a>
 
                     <!-- Toggle Theme (desktop) -->
                     <button
                         id="theme-toggle"
-                        class="ml-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-400 hover:dark:bg-gray-500"
+                        class="ml-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:text-custom-red-800 hover:dark:text-custom-red-600 hover:bg-gray-200 hover:dark:bg-gray-800"
                     >
                         <i
                             id="theme-toggle-icon"
@@ -72,7 +86,7 @@
                     <!-- Toggle Theme (mobile) -->
                     <button
                         id="theme-toggle-mobile"
-                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-400 hover:dark:bg-gray-500"
+                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:text-custom-red-800 hover:dark:text-custom-red-600 hover:bg-gray-200 hover:dark:bg-gray-800"
                     >
                         <i
                             id="theme-toggle-icon-mobile"
@@ -116,18 +130,18 @@
                 <nav class="flex flex-col space-y-3">
                     <a
                         href="#home"
-                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600"
+                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600 border-b border-custom-red-50"
                         >Home</a
                     >
                     <a
-                        href="#user"
-                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600"
-                        >User</a
+                        href="#post"
+                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600 border-b border-custom-red-50"
+                        >Post</a
                     >
                     <a
-                        href="#album"
-                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600"
-                        >Album</a
+                        href="#user"
+                        class="text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600 border-b border-custom-red-50"
+                        >User</a
                     >
                 </nav>
             </div>
@@ -159,5 +173,7 @@
             &copy; {{ date("Y") }} {{ config("app.name", "Laravel") }} - All
             rights reserved.
         </footer>
+
+        <!-- @yield('scripts') -->
     </body>
 </html>
