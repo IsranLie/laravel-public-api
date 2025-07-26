@@ -22,3 +22,7 @@ html.dark .active {
 html.dark .active:hover {
     color: #ff6565;
 }
+
+#preloader {
+    transition: opacity 0.3s ease;
+}

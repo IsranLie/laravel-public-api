@@ -106,7 +106,7 @@
     @php $current = $data->currentPage(); $last = $data->lastPage(); @endphp
 
     <div class="mt-6 flex flex-wrap justify-center gap-2">
-        {{-- Tombol Prev --}}
+        <!-- Tombol Prev -->
         @if ($data->onFirstPage() === false)
         <a
             href="{{ $data->previousPageUrl() }}"
@@ -115,7 +115,7 @@
         >
         @endif
 
-        {{-- Halaman Awal --}}
+        <!-- Halaman Awal -->
         @if ($current > 2)
         <a
             href="{{ $data->url(1) }}"
@@ -128,7 +128,7 @@
         <span class="px-2 text-custom-red-600">...</span>
         @endif @endif
 
-        {{-- Halaman Tengah --}}
+        <!-- Halaman Tengah -->
         @for ($i = max(1, $current - 1); $i <= min($last, $current + 1); $i++)
         <a
             href="{{ $data->url($i) }}"
@@ -139,7 +139,7 @@
         >
         @endfor
 
-        {{-- Halaman Akhir --}}
+        <!-- Halaman Akhir -->
         @if ($current < $last - 1) @if ($current < $last - 2)
         <span class="px-2 text-custom-red-600">...</span>
         @endif
@@ -154,7 +154,7 @@
         >
         @endif
 
-        {{-- Tombol Next --}}
+        <!-- Tombol Next -->
         @if ($data->hasMorePages())
         <a
             href="{{ $data->nextPageUrl() }}"

@@ -21,6 +21,16 @@
     <body
         class="antialiased figtree bg-gray-50 dark:bg-gray-800 text-gray-800 flex flex-col min-h-screen"
     >
+        <!-- Preloader -->
+        <div
+            id="preloader"
+            class="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex items-center justify-center"
+        >
+            <div
+                class="animate-spin rounded-full h-16 w-16 border-t-4 border-custom-red-600"
+            ></div>
+        </div>
+
         <!-- Header -->
         <header class="bg-white shadow dark:bg-gray-900 sticky top-0 z-50">
             <div

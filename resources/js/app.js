@@ -111,3 +111,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const preloader = document.getElementById("preloader");
+    if (preloader) {
+        preloader.style.opacity = "0";
+        setTimeout(() => (preloader.style.display = "none"), 300);
+    }
+});
+
+document.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", () => {
+        const preloader = document.getElementById("preloader");
+        preloader.style.display = "flex";
+        preloader.style.opacity = "1";
+    });
+});

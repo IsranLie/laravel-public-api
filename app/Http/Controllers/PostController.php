@@ -227,4 +227,9 @@ class PostController extends Controller
                 ->with('error', 'Gagal update post: ' . $e->getMessage());
         }
     }
+
+    public function search(Request $request)
+    {
+        //
+    }
 }
