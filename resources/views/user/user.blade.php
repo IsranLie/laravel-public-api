@@ -113,8 +113,8 @@
             <p
                 class="text-sm text-gray-700 dark:text-gray-300 mb-4 line-clamp-2"
             >
-                {{ $user["id"] }}. Lorem ipsum dolor sit amet, consectetur
-                adipisicing elit. Sunt, sit.
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt,
+                sit.
             </p>
 
             <div class="flex flex-wrap gap-2 text-sm mt-auto">

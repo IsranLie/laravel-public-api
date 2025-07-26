@@ -51,9 +51,9 @@ The website will run on the laravel server `http://127.0.0.1:8000/`
 
 ### Technologies Used
 
--   [Laravel](https://laravel.com/): free and open-source PHP-based web framework for building web applications.
+-   [Laravel v10.x](https://laravel.com/): free and open-source PHP-based web framework for building web applications.
 -   [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript): often abbreviated as JS, is a programming language and core technology of the World Wide Web, alongside HTML and CSS.
--   [Tailwind CSS](https://tailwindcss.com/): a utility-first CSS framework that provides a set of predefined CSS classes.
+-   [Tailwind CSS v3.x](https://tailwindcss.com/): a utility-first CSS framework that provides a set of predefined CSS classes.
 -   [Remix Icons](https://remixicon.com/): open-source neutral-style system symbols elaborately crafted for designers and developers.
 -   [JSONPlaceholder API](https://jsonplaceholder.typicode.com/): free fake and reliable API for testing and prototyping.
 -   [Lorem Picsum](https://picsum.photos/): image url for testing.

@@ -58,7 +58,7 @@
                         <h3
                             class="text-xl font-extrabold text-custom-red-950 dark:text-custom-red-300 capitalize mb-2 line-clamp-2"
                         >
-                            {{ $post["id"] }}. {{ $post["title"] }}
+                            {{ $post["title"] }}
                         </h3>
                         <p
                             class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3"

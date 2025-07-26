@@ -55,7 +55,9 @@
                         href="{{ route('posts') }}"
                         class="font-semibold
                         {{
-                            $title === 'Posts' || $title === 'Post Detail'
+                            $title === 'Posts' ||
+                            $title === 'Post Detail' ||
+                            $title === 'Post Create'
                                 ? 'active'
                                 : 'text-custom-red-950 dark:text-custom-red-50 hover:text-custom-red-600 hover:dark:text-custom-red-600'
                         }}
@@ -179,6 +181,15 @@
             id="backdrop"
             class="fixed inset-0 bg-black/40 hidden z-[55]"
         ></div>
+
+        <!-- Alert -->
+        @if (session('success'))
+        <x-alert type="success" :message="session('success')" />
+        @endif @if (session('error'))
+        <x-alert type="error" :message="session('error')" />
+        @endif @if (session('info'))
+        <x-alert type="info" :message="session('info')" />
+        @endif
 
         <!-- Main Content -->
         <main class="container mx-auto py-2 md:px-20 md:py-4 flex-grow">

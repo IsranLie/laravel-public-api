@@ -1,4 +1,5 @@
 @extends('app') @section('content')
+
 <div class="mx-auto rounded-xl bg-white p-8 text-left dark:bg-gray-900">
     <!-- Write , Search, Filter -->
     <div
@@ -65,7 +66,7 @@
                         <h3
                             class="text-xl font-extrabold text-custom-red-950 dark:text-custom-red-300 capitalize mb-2 line-clamp-2"
                         >
-                            {{ $post["id"] }}. {{ $post["title"] }}
+                            {{ $post["title"] }}
                         </h3>
                         <p
                             class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3"
@@ -126,7 +127,9 @@
                             >
                                 <div class="py-1" role="none">
                                     <a
-                                        href="#"
+                                        href="{{
+                                            route('post.edit', $post['id'])
+                                        }}"
                                         class="text-gray-700 hover:text-yellow-600 hover:dark:text-yellow-400 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
                                         role="menuitem"
                                         tabindex="-1"

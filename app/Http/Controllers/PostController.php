@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 
 class PostController extends Controller
 {
@@ -130,8 +131,100 @@ class PostController extends Controller
     public function create()
     {
         $title = 'Post Create';
-        return view('post/post_create', compact('title'));
+
+        $users = Cache::remember('jsonplaceholder_users', 3600, function () {
+            return Http::retry(3, 200)
+                ->get('https://jsonplaceholder.typicode.com/users')
+                ->throw()
+                ->json();
+        });
+
+        return view('post/post_create', compact('title', 'users'));
     }
 
-    public function store() {}
+    public function store(Request $request)
+    {
+        // Validasi form
+        $validated = $request->validate([
+            'user' => 'required|integer',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        // Kirim data ke API eksternal
+        $response = Http::post('https://jsonplaceholder.typicode.com/posts', [
+            'title'  => $validated['title'],
+            'body'   => $validated['content'],
+            'userId' => $validated['user'],
+        ]);
+
+        // Ambil respons JSON
+        $data = $response->json();
+
+        return redirect()->route('posts')
+            ->with('success', 'Post berhasil dikirim. Id: ' . $data['id'] . ' Title: ' . $data['title']);
+    }
+
+    public function edit($id)
+    {
+        $title = 'Post Update';
+
+        try {
+            // Ambil post
+            $post = Cache::remember("jp_post_{$id}", 3600, function () use ($id) {
+                $response = Http::retry(3, 200)
+                    ->timeout(5)
+                    ->acceptJson()
+                    ->get("https://jsonplaceholder.typicode.com/posts/{$id}");
+
+                if ($response->status() === 404 || blank($response->json())) {
+                    abort(404, 'Post tidak ditemukan');
+                }
+
+                return $response->throw()->json();
+            });
+
+            // Ambil semua users (bukan hanya 1 user)
+            $users = Cache::remember('jp_users', 3600, function () {
+                return Http::retry(3, 200)
+                    ->timeout(5)
+                    ->acceptJson()
+                    ->get("https://jsonplaceholder.typicode.com/users")
+                    ->throw()
+                    ->json();
+            });
+        } catch (\Throwable $e) {
+            Log::error('Gagal memproses data: ' . $e->getMessage());
+            return redirect()
+                ->route('posts')
+                ->with('error', 'Gagal memproses data: ' . $e->getMessage());
+        }
+
+        return view('post/post_create', compact('title', 'users', 'post'));
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'user' => 'required|integer',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        try {
+            Http::put("https://jsonplaceholder.typicode.com/posts/{$id}", [
+                'id'     => $id,
+                'title'  => $validated['title'],
+                'body'   => $validated['content'],
+                'userId' => $validated['user'],
+            ])->throw()->json();
+
+            return redirect()->route('posts')
+                ->with('success', "Post Id: '{$id}' Title: '{$validated['title']}' berhasil diupdate.");
+        } catch (\Throwable $e) {
+            return redirect()->route('posts')
+                ->with('error', 'Gagal update post: ' . $e->getMessage());
+        }
+    }
 }
