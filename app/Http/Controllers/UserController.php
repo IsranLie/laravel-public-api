@@ -12,7 +12,9 @@ class UserController extends Controller
     public function index()
     {
         $title = "Users";
+
         try {
+            // Ambil semua users
             $users = Cache::remember('jsonplaceholder_users', 3600, function () {
                 return Http::retry(3, 200)
                     ->get('https://jsonplaceholder.typicode.com/users')
@@ -20,8 +22,23 @@ class UserController extends Controller
                     ->json();
             });
 
-            $data = collect($users)->map(function ($user) {
+            // Ambil semua posts
+            $posts = Cache::remember('jsonplaceholder_posts', 3600, function () {
+                return Http::retry(3, 200)
+                    ->get('https://jsonplaceholder.typicode.com/posts')
+                    ->throw()
+                    ->json();
+            });
+
+            // Hitung jumlah post per userId
+            $postCounts = collect($posts)
+                ->groupBy('userId')
+                ->map(fn($group) => $group->count());
+
+            // Gabungkan data jumlah post ke user
+            $data = collect($users)->map(function ($user) use ($postCounts) {
                 $user['image_url'] = "https://picsum.photos/id/{$user['id']}/300/300";
+                $user['post_count'] = $postCounts->get($user['id'], 0);
                 return $user;
             })->toArray();
         } catch (RequestException $e) {
@@ -31,6 +48,7 @@ class UserController extends Controller
 
         return view('user/user', compact('title', 'data'));
     }
+
 
     public function show($id)
     {

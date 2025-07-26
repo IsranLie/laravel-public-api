@@ -33,12 +33,47 @@
             </button>
         </form>
 
-        <button
-            class="flex-shrink-0 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center space-x-2"
-        >
-            <i class="ri-equalizer-line text-lg"></i>
-            <span>Filter</span>
-        </button>
+        <div class="relative">
+            <!-- Tombol Filter -->
+            <button
+                id="filterBtn"
+                type="button"
+                class="flex-shrink-0 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center space-x-2"
+            >
+                <i class="ri-equalizer-line text-lg"></i>
+                <span>Filter</span>
+            </button>
+
+            <!-- Dropdown -->
+            <div
+                id="filterDropdown"
+                class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg hidden z-50"
+            >
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                    <li>
+                        <a
+                            href="#"
+                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >Newest</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >Oldest</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >Most Comments</a
+                        >
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <div class="mt-4 grid gap-6 md:grid-cols-1 lg:grid-cols-2">
@@ -121,7 +156,7 @@
                 <span
                     class="inline-block bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full px-3 py-1 text-xs font-semibold"
                 >
-                    ?? Posts
+                    {{ $user["post_count"] }} Posts
                 </span>
             </div>
         </div>
@@ -130,6 +165,7 @@
 </div>
 @endsection @section('scripts')
 <script>
+    // Dropdown edit & delete
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('[id^="menu-button-"]').forEach((button) => {
             const dropdownMenu = button.nextElementSibling;
@@ -177,6 +213,28 @@
                         }
                     }
                 });
+        });
+    });
+
+    // Dropdown filter
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterBtn = document.getElementById("filterBtn");
+        const filterDropdown = document.getElementById("filterDropdown");
+
+        // Toggle dropdown ketika tombol di klik
+        filterBtn.addEventListener("click", function (e) {
+            e.stopPropagation(); // mencegah event bubble
+            filterDropdown.classList.toggle("hidden");
+        });
+
+        // Tutup dropdown jika klik di luar
+        document.addEventListener("click", function (e) {
+            if (
+                !filterDropdown.classList.contains("hidden") &&
+                !filterDropdown.contains(e.target)
+            ) {
+                filterDropdown.classList.add("hidden");
+            }
         });
     });
 </script>

@@ -4,31 +4,109 @@
         class="flex flex-col md:flex-row items-center justify-between mb-10 space-y-4 md:space-y-0 md:space-x-4"
     >
         <form
-            action="{{ route('posts') }}"
+            action="{{ url('/') }}"
             method="GET"
             class="flex-grow w-full md:w-auto flex items-center border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden"
         >
             <input
                 type="text"
                 name="search"
-                placeholder="Search posts..."
+                placeholder="Search by title/content"
                 class="flex-grow py-2 px-4 focus:outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
                 value="{{ request('search') }}"
             />
+            @if(request('search'))
+            <a
+                href="{{ url('/') }}"
+                title="Reset"
+                class="bg-gray-100 dark:bg-gray-700 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300"
+            >
+                <i class="ri-close-line text-lg"></i>
+            </a>
+            @else
             <button
                 type="submit"
                 class="bg-gray-100 dark:bg-gray-700 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300"
             >
                 <i class="ri-search-line text-lg"></i>
             </button>
+            @endif
         </form>
 
-        <button
-            class="flex-shrink-0 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center space-x-2"
-        >
-            <i class="ri-equalizer-line text-lg"></i>
-            <span>Filter</span>
-        </button>
+        <div class="relative">
+            <!-- Tombol Filter -->
+            <button
+                id="filterBtn"
+                type="button"
+                class="flex-shrink-0 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center space-x-2"
+            >
+                <i class="ri-equalizer-line text-lg"></i>
+                <span>Filter</span>
+            </button>
+
+            <!-- Dropdown -->
+            <div
+                id="filterDropdown"
+                class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg hidden z-50"
+            >
+                <ul
+                    class="py-2 text-sm text-gray-700 dark:text-gray-200 space-y-1"
+                >
+                    <li class="px-4 py-2">
+                        <form method="GET" action="{{ url('/') }}">
+                            <label
+                                class="block mb-1 text-gray-700 dark:text-gray-300 text-sm"
+                                >Filter by ID</label
+                            >
+                            <input
+                                type="number"
+                                name="search_id"
+                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
+                                placeholder="Post ID..."
+                            />
+                            <button
+                                type="submit"
+                                class="mt-2 w-full bg-custom-red-600 text-white py-1 rounded hover:bg-custom-red-700"
+                            >
+                                Apply
+                            </button>
+                        </form>
+                    </li>
+                    <li
+                        class="px-4 py-2 border-t border-gray-200 dark:border-gray-700"
+                    >
+                        <form method="GET" action="{{ url('/') }}">
+                            <label
+                                class="block mb-1 text-gray-700 dark:text-gray-300 text-sm"
+                                >Filter by Author</label
+                            >
+                            <input
+                                type="text"
+                                name="search_user"
+                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
+                                placeholder="Author name..."
+                            />
+                            <button
+                                type="submit"
+                                class="mt-2 w-full bg-custom-red-600 text-white py-1 rounded hover:bg-custom-red-700"
+                            >
+                                Apply
+                            </button>
+                        </form>
+                    </li>
+                    <li
+                        class="px-4 py-2 border-t border-gray-200 dark:border-gray-700"
+                    >
+                        <a
+                            href="{{ url('/') }}"
+                            class="mt-2 block text-center bg-gray-300 hover:bg-gray-400 text-gray-800 dark:text-gray-200 py-1 rounded"
+                        >
+                            Reset
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <div class="mt-4 grid gap-6 md:grid-cols-1 lg:grid-cols-2">
@@ -37,17 +115,12 @@
             class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition duration-300 flex flex-col md:flex-row h-full"
         >
             <div class="md:w-1/3 flex-shrink-0">
-                <!-- <a
-                    href="{{ route('post.detail', ['id' => $post['id']]) }}"
-                    class="block"
-                > -->
                 <img
                     class="w-full h-full object-cover aspect-square"
                     src="{{ $post['image_url'] }}"
                     alt="Image {{ $post['id'] }}"
                     onerror="this.onerror=null;this.src='https://placehold.co/300x300/E0E0E0/333333?text=Image+Not+Found';"
                 />
-                <!-- </a> -->
             </div>
             <div class="p-4 flex flex-col flex-grow md:w-2/3">
                 <div class="flex-grow">
@@ -164,4 +237,29 @@
         @endif
     </div>
 </div>
+@endsection @section('scripts')
+<!-- Dropdown filter -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterBtn = document.getElementById("filterBtn");
+        const filterDropdown = document.getElementById("filterDropdown");
+
+        // Toggle dropdown ketika tombol di klik
+        filterBtn.addEventListener("click", function (e) {
+            e.stopPropagation(); // mencegah event bubble
+            filterDropdown.classList.toggle("hidden");
+        });
+
+        // Tutup dropdown jika klik di luar
+        document.addEventListener("click", function (e) {
+            if (
+                !filterDropdown.classList.contains("hidden") &&
+                !filterDropdown.contains(e.target)
+            ) {
+                filterDropdown.classList.add("hidden");
+            }
+        });
+    });
+</script>
+
 @endsection
