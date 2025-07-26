@@ -56,7 +56,7 @@ class HomeController extends Controller
                     ]);
                 });
 
-            // ===== FILTER =====
+            // FILTER
             $searchId = request('search_id');
             $searchUser = request('search_user');
             $search     = request('search');
@@ -89,7 +89,7 @@ class HomeController extends Controller
                 ['path' => request()->url()]
             );
         } catch (RequestException $e) {
-            Log::error("HTTP Request gagal: " . $e->getMessage());
+            Log::error("HTTP Request failed: " . $e->getMessage());
         }
 
         return view('home/home', compact('title', 'data'));

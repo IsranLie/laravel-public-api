@@ -203,8 +203,6 @@
     // Bookmark
     const bookmarksKey = "bookmarked_posts";
     const bookmarkButtons = document.querySelectorAll(".bookmark-toggle");
-
-    // Ambil data bookmark dari localStorage
     let bookmarkedPosts = JSON.parse(localStorage.getItem(bookmarksKey)) || [];
 
     // Fungsi untuk update tampilan icon bookmark
@@ -236,7 +234,6 @@
                 bookmarkedPosts.push(postId);
             }
 
-            // Simpan ke localStorage
             localStorage.setItem(bookmarksKey, JSON.stringify(bookmarkedPosts));
 
             // Update icon

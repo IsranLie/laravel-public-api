@@ -28,7 +28,7 @@
     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
         {{ isset($post) ? 'Update Post' : 'Write Post' }}
     </h3>
-    <p class="text-sm text-gray-800 dark:text-white">Important: resource will not be really updated on the server but it will be faked as if.</p>
+    <p class="text-xs text-gray-800 dark:text-white">Important: resource will not be really updated on the server but it will be faked as if.</p>
     <div class="mb-8">
         <form
             action="{{ isset($post) ? route('post.update', $post['id']) : route('post.store') }}"

@@ -5,36 +5,52 @@
         class="flex flex-col md:flex-row items-center justify-between mb-10 space-y-4 md:space-y-0 md:space-x-4"
     >
         <a
-            href="#"
+            href="{{ route('user.create') }}"
             class="flex-shrink-0 bg-custom-red-600 hover:bg-custom-red-700 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center space-x-2"
         >
             <i class="ri-add-line text-lg"></i>
             <span>Add User</span>
         </a>
 
+        <!-- Search -->
         <form
-            method="POST"
+            action="{{ route('users') }}"
+            method="GET"
             class="flex-grow w-full md:w-auto flex items-center border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden"
         >
-            @csrf
             <input
                 type="text"
                 name="search"
-                placeholder="Search user..."
+                placeholder="Search by name/username/email/company"
                 class="flex-grow py-2 px-4 focus:outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
                 value="{{ request('search') }}"
-                required
             />
+            <input
+                type="hidden"
+                name="sort"
+                value="{{ request('sort', 'name_asc') }}"
+            />
+
+            @if(request('search'))
+            <a
+                href="{{ route('users', ['sort' => request('sort', 'name_asc')]) }}"
+                title="Reset"
+                class="bg-gray-100 dark:bg-gray-700 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300"
+            >
+                <i class="ri-close-line text-lg"></i>
+            </a>
+            @else
             <button
                 type="submit"
                 class="bg-gray-100 dark:bg-gray-700 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300"
             >
                 <i class="ri-search-line text-lg"></i>
             </button>
+            @endif
         </form>
 
+        <!-- Tombol Filter -->
         <div class="relative">
-            <!-- Tombol Filter -->
             <button
                 id="filterBtn"
                 type="button"
@@ -52,24 +68,27 @@
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
                     <li>
                         <a
-                            href="#"
-                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >Newest</a
+                            href="{{ request()->fullUrlWithQuery(['sort' => 'name_asc', 'page' => 1]) }}"
+                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 {{
+                                request('sort') === 'name_asc'
+                                    ? 'font-semibold text-yellow-600'
+                                    : ''
+                            }}"
                         >
+                            Sort Name A-Z
+                        </a>
                     </li>
                     <li>
                         <a
-                            href="#"
-                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >Oldest</a
+                            href="{{ request()->fullUrlWithQuery(['sort' => 'name_desc', 'page' => 1]) }}"
+                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 {{
+                                request('sort') === 'name_desc'
+                                    ? 'font-semibold text-yellow-600'
+                                    : ''
+                            }}"
                         >
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >Most Comments</a
-                        >
+                            Sort Name Z-A
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -123,7 +142,7 @@
                     >
                         <div class="py-1" role="none">
                             <a
-                                href="#"
+                                href="{{ route('user.edit', $user['id']) }}"
                                 class="text-gray-700 hover:text-yellow-600 hover:dark:text-yellow-400 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
                                 role="menuitem"
                                 tabindex="-1"
@@ -131,15 +150,21 @@
                             >
                                 Edit
                             </a>
-                            <a
-                                href="#"
-                                class="text-gray-700 hover:text-custom-red-600 hover:dark:text-custom-red-400 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
-                                role="menuitem"
-                                tabindex="-1"
-                                id="menu-item-delete-{{ $user['id'] }}"
+                            <form
+                                id="delete-form-{{ $user['id'] }}"
+                                action="{{ route('user.delete', $user['id']) }}"
+                                method="POST"
+                                class="w-full"
                             >
-                                Delete
-                            </a>
+                                @csrf @method('DELETE')
+                                <button
+                                    type="button"
+                                    data-id="{{ $user['id'] }}"
+                                    class="menu-delete text-gray-700 hover:text-custom-red-600 hover:dark:text-custom-red-400 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                    Delete
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -161,6 +186,41 @@
             </div>
         </div>
         @endforeach
+    </div>
+
+    <!-- Modal Delete -->
+    <div
+        id="deleteModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50"
+    >
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+            <h2
+                class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4"
+            >
+                Delete User
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Are you sure you want to delete this user?
+            </p>
+            <p class="text-xs text-gray-600 dark:text-gray-300 mb-6">
+                Important: resource will not be really updated on the server but
+                it will be faked as if.
+            </p>
+            <div class="flex justify-end gap-2">
+                <button
+                    id="cancelDelete"
+                    class="px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 rounded"
+                >
+                    Cancel
+                </button>
+                <button
+                    id="confirmDelete"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 @endsection @section('scripts')
@@ -234,6 +294,40 @@
                 !filterDropdown.contains(e.target)
             ) {
                 filterDropdown.classList.add("hidden");
+            }
+        });
+    });
+
+    // Delete Post
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("deleteModal");
+        const cancelBtn = document.getElementById("cancelDelete");
+        const confirmBtn = document.getElementById("confirmDelete");
+
+        let formToSubmit = null;
+
+        // Buka modal & simpan form yang mau disubmit
+        document.querySelectorAll(".menu-delete").forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                const id = button.getAttribute("data-id");
+                formToSubmit = document.getElementById(`delete-form-${id}`);
+                modal.classList.remove("hidden");
+            });
+        });
+
+        // Batal
+        cancelBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            modal.classList.add("hidden");
+            formToSubmit = null;
+        });
+
+        // Konfirmasi
+        confirmBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (formToSubmit) {
+                formToSubmit.submit();
             }
         });
     });

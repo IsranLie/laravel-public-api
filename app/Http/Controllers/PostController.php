@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Arr;
 
 class PostController extends Controller
 {
@@ -61,7 +60,7 @@ class PostController extends Controller
                     ]);
                 });
 
-            // ===== FILTER =====
+            // FILTER
             $searchId = request('search_id');
             $searchUser = request('search_user');
             $search     = request('search');
@@ -94,7 +93,7 @@ class PostController extends Controller
                 ['path' => request()->url()]
             );
         } catch (RequestException $e) {
-            Log::error("HTTP Request gagal: " . $e->getMessage());
+            Log::error("HTTP Request failed: " . $e->getMessage());
         }
 
         return view('post/post', compact('title', 'data'));
@@ -142,8 +141,8 @@ class PostController extends Controller
                 'image_url'       => "https://picsum.photos/id/{$post['id']}/800/600",
             ]);
         } catch (RequestException $e) {
-            Log::error("HTTP Request gagal: " . $e->getMessage());
-            abort(500, "Gagal memuat data.");
+            Log::error("HTTP Request failed: " . $e->getMessage());
+            abort(500, "failed to process data.");
         }
 
         return view('post/post_detail', compact('title', 'postData', 'comments'));
@@ -183,7 +182,7 @@ class PostController extends Controller
         $data = $response->json();
 
         return redirect()->route('posts')
-            ->with('success', 'Post berhasil dikirim. Id: ' . $data['id'] . ' Title: ' . $data['title']);
+            ->with('success', 'Post sent sucessfully. Id: ' . $data['id'] . ' Title: ' . $data['title']);
     }
 
     public function edit($id)
@@ -199,13 +198,13 @@ class PostController extends Controller
                     ->get("https://jsonplaceholder.typicode.com/posts/{$id}");
 
                 if ($response->status() === 404 || blank($response->json())) {
-                    abort(404, 'Post tidak ditemukan');
+                    abort(404, 'Post not found');
                 }
 
                 return $response->throw()->json();
             });
 
-            // Ambil semua users (bukan hanya 1 user)
+            // Ambil semua users
             $users = Cache::remember('jp_users', 3600, function () {
                 return Http::retry(3, 200)
                     ->timeout(5)
@@ -215,10 +214,10 @@ class PostController extends Controller
                     ->json();
             });
         } catch (\Throwable $e) {
-            Log::error('Gagal memproses data: ' . $e->getMessage());
+            Log::error('Failed process data: ' . $e->getMessage());
             return redirect()
                 ->route('posts')
-                ->with('error', 'Gagal memproses data: ' . $e->getMessage());
+                ->with('error', 'Failed process data: ' . $e->getMessage());
         }
 
         return view('post/post_create', compact('title', 'users', 'post'));
@@ -242,10 +241,10 @@ class PostController extends Controller
             ])->throw()->json();
 
             return redirect()->route('posts')
-                ->with('success', "Post Id: '{$id}' Title: '{$validated['title']}' berhasil diupdate.");
+                ->with('success', "Post Id: '{$id}' Title: '{$validated['title']}' has been updated.");
         } catch (\Throwable $e) {
             return redirect()->route('posts')
-                ->with('error', 'Gagal update post: ' . $e->getMessage());
+                ->with('error', 'Failed update post: ' . $e->getMessage());
         }
     }
 
@@ -255,10 +254,10 @@ class PostController extends Controller
             Http::delete("https://jsonplaceholder.typicode.com/posts/{$id}");
 
             return redirect()->route('posts')
-                ->with('success', "Post Id: '{$id}' berhasil dihapus.");
+                ->with('success', "Post Id: '{$id}' has been deleted.");
         } catch (\Throwable $e) {
             return redirect()->route('posts')
-                ->with('error', 'Gagal delete post: ' . $e->getMessage());
+                ->with('error', 'Failed delete post: ' . $e->getMessage());
         }
     }
 }

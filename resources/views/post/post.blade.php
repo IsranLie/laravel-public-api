@@ -319,6 +319,10 @@
             <p class="text-gray-600 dark:text-gray-300 mb-6">
                 Are you sure you want to delete this post?
             </p>
+            <p class="text-xs text-gray-600 dark:text-gray-300 mb-6">
+                Important: resource will not be really updated on the server but
+                it will be faked as if.
+            </p>
             <div class="flex justify-end gap-2">
                 <button
                     id="cancelDelete"
@@ -411,7 +415,7 @@
         });
     });
 
-    // Delete
+    // Delete Post
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("deleteModal");
         const cancelBtn = document.getElementById("cancelDelete");
@@ -436,7 +440,7 @@
             formToSubmit = null;
         });
 
-        // Konfirmasi -> submit form (redirect + flash message akan jalan)
+        // Konfirmasi
         confirmBtn.addEventListener("click", (e) => {
             e.preventDefault();
             if (formToSubmit) {
@@ -446,11 +450,8 @@
     });
 
     // Bookmark
-    // Bookmark
     const bookmarksKey = "bookmarked_posts";
     const bookmarkButtons = document.querySelectorAll(".bookmark-toggle");
-
-    // Ambil data bookmark dari localStorage
     let bookmarkedPosts = JSON.parse(localStorage.getItem(bookmarksKey)) || [];
 
     // Fungsi untuk update tampilan icon bookmark
