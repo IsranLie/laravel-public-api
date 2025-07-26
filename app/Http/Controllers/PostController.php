@@ -46,8 +46,8 @@ class PostController extends Controller
             $usersById = collect($users)->keyBy('id');
 
             $allData = collect($posts)
-                ->shuffle()
-                ->values()
+                // ->shuffle()
+                // ->values()
                 ->map(function ($post) use ($usersById, $commentCounts) {
                     $user = $usersById->get($post['userId']);
                     $commentCount = $commentCounts->get($post['id'], 0);
@@ -60,6 +60,27 @@ class PostController extends Controller
                         'image_url'       => "https://picsum.photos/id/{$post['id']}/300/300",
                     ]);
                 });
+
+            // ===== FILTER =====
+            $searchId = request('search_id');
+            $searchUser = request('search_user');
+            $search     = request('search');
+
+            if ($searchId) {
+                $allData = $allData->where('id', (int)$searchId);
+            }
+
+            if ($searchUser) {
+                $allData = $allData->filter(function ($item) use ($searchUser) {
+                    return stripos($item['author_name'], $searchUser) !== false;
+                });
+            }
+
+            if ($search) {
+                $allData = $allData->filter(function ($item) use ($search) {
+                    return stripos($item['title'], $search) !== false || stripos($item['body'], $search) !== false;
+                });
+            }
 
             // PAGINATION
             $perPage = 10;
@@ -228,8 +249,16 @@ class PostController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function delete($id)
     {
-        //
+        try {
+            Http::delete("https://jsonplaceholder.typicode.com/posts/{$id}");
+
+            return redirect()->route('posts')
+                ->with('success', "Post Id: '{$id}' berhasil dihapus.");
+        } catch (\Throwable $e) {
+            return redirect()->route('posts')
+                ->with('error', 'Gagal delete post: ' . $e->getMessage());
+        }
     }
 }

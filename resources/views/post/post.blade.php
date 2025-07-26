@@ -13,26 +13,36 @@
             <span>Write</span>
         </a>
 
-        <!-- action="" -->
+        <!-- Search -->
         <form
-            method="POST"
+            action="{{ route('posts') }}"
+            method="GET"
             class="flex-grow w-full md:w-auto flex items-center border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden"
         >
-            @csrf
             <input
                 type="text"
                 name="search"
-                placeholder="Search posts..."
+                placeholder="Search by title/content"
                 class="flex-grow py-2 px-4 focus:outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
-                value="{{ request('search') }}"
                 required
+                value="{{ request('search') }}"
             />
+            @if(request('search'))
+            <a
+                href="{{ route('posts') }}"
+                title="Reset"
+                class="bg-gray-100 dark:bg-gray-700 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300"
+            >
+                <i class="ri-close-line text-lg"></i>
+            </a>
+            @else
             <button
                 type="submit"
                 class="bg-gray-100 dark:bg-gray-700 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300"
             >
                 <i class="ri-search-line text-lg"></i>
             </button>
+            @endif
         </form>
 
         <div class="relative">
@@ -51,27 +61,62 @@
                 id="filterDropdown"
                 class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg hidden z-50"
             >
-                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                    <li>
-                        <a
-                            href="#"
-                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >Newest</a
-                        >
+                <ul
+                    class="py-2 text-sm text-gray-700 dark:text-gray-200 space-y-1"
+                >
+                    <li class="px-4 py-2">
+                        <form method="GET" action="{{ route('posts') }}">
+                            <label
+                                class="block mb-1 text-gray-700 dark:text-gray-300 text-sm"
+                                >Filter by ID</label
+                            >
+                            <input
+                                type="number"
+                                name="search_id"
+                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
+                                required
+                                placeholder="Post ID..."
+                            />
+                            <button
+                                type="submit"
+                                class="mt-2 w-full bg-custom-red-600 text-white py-1 rounded hover:bg-custom-red-700"
+                            >
+                                Apply
+                            </button>
+                        </form>
                     </li>
-                    <li>
-                        <a
-                            href="#"
-                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >Oldest</a
-                        >
+                    <li
+                        class="px-4 py-2 border-t border-gray-200 dark:border-gray-700"
+                    >
+                        <form method="GET" action="{{ route('posts') }}">
+                            <label
+                                class="block mb-1 text-gray-700 dark:text-gray-300 text-sm"
+                                >Filter by Author</label
+                            >
+                            <input
+                                type="text"
+                                name="search_user"
+                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
+                                required
+                                placeholder="Author name..."
+                            />
+                            <button
+                                type="submit"
+                                class="mt-2 w-full bg-custom-red-600 text-white py-1 rounded hover:bg-custom-red-700"
+                            >
+                                Apply
+                            </button>
+                        </form>
                     </li>
-                    <li>
+                    <li
+                        class="px-4 py-2 border-t border-gray-200 dark:border-gray-700"
+                    >
                         <a
-                            href="#"
-                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >Most Comments</a
+                            href="{{ route('posts') }}"
+                            class="mt-2 block text-center bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 text-gray-800 dark:text-gray-200 py-1 rounded"
                         >
+                            Reset
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -133,7 +178,8 @@
                             {{ $post["comment_count"] }}
                         </span>
                         <span
-                            class="text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 cursor-pointer"
+                            class="bookmark-toggle text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 cursor-pointer"
+                            data-id="{{ $post['id'] }}"
                         >
                             <i class="ri-bookmark-line"></i>
                         </span>
@@ -171,15 +217,23 @@
                                     >
                                         Edit
                                     </a>
-                                    <a
-                                        href="#"
-                                        class="text-gray-700 hover:text-custom-red-600 hover:dark:text-custom-red-400 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
-                                        role="menuitem"
-                                        tabindex="-1"
-                                        id="menu-item-delete-{{ $post['id'] }}"
+                                    <form
+                                        id="delete-form-{{ $post['id'] }}"
+                                        action="{{
+                                            route('post.delete', $post['id'])
+                                        }}"
+                                        method="POST"
+                                        class="inline"
                                     >
-                                        Delete
-                                    </a>
+                                        @csrf @method('DELETE')
+                                        <button
+                                            type="button"
+                                            data-id="{{ $post['id'] }}"
+                                            class="menu-delete text-gray-700 hover:text-custom-red-600 hover:dark:text-custom-red-400 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -190,8 +244,8 @@
         @endforeach
     </div>
 
+    <!-- Pagination -->
     @php $current = $data->currentPage(); $last = $data->lastPage(); @endphp
-
     <div class="mt-6 flex flex-wrap justify-center gap-2">
         <!-- Tombol Prev -->
         @if ($data->onFirstPage() === false)
@@ -249,6 +303,37 @@
             >Next</a
         >
         @endif
+    </div>
+
+    <!-- Modal Delete -->
+    <div
+        id="deleteModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50"
+    >
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+            <h2
+                class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4"
+            >
+                Delete Post
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Are you sure you want to delete this post?
+            </p>
+            <div class="flex justify-end gap-2">
+                <button
+                    id="cancelDelete"
+                    class="px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 rounded"
+                >
+                    Cancel
+                </button>
+                <button
+                    id="confirmDelete"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 @endsection @section('scripts')
@@ -325,5 +410,87 @@
             }
         });
     });
+
+    // Delete
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("deleteModal");
+        const cancelBtn = document.getElementById("cancelDelete");
+        const confirmBtn = document.getElementById("confirmDelete");
+
+        let formToSubmit = null;
+
+        // Buka modal & simpan form yang mau disubmit
+        document.querySelectorAll(".menu-delete").forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                const id = button.getAttribute("data-id");
+                formToSubmit = document.getElementById(`delete-form-${id}`);
+                modal.classList.remove("hidden");
+            });
+        });
+
+        // Batal
+        cancelBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            modal.classList.add("hidden");
+            formToSubmit = null;
+        });
+
+        // Konfirmasi -> submit form (redirect + flash message akan jalan)
+        confirmBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
+        });
+    });
+
+    // Bookmark
+    // Bookmark
+    const bookmarksKey = "bookmarked_posts";
+    const bookmarkButtons = document.querySelectorAll(".bookmark-toggle");
+
+    // Ambil data bookmark dari localStorage
+    let bookmarkedPosts = JSON.parse(localStorage.getItem(bookmarksKey)) || [];
+
+    // Fungsi untuk update tampilan icon bookmark
+    function updateBookmarkIcons() {
+        bookmarkButtons.forEach((btn) => {
+            const postId = btn.getAttribute("data-id");
+            const icon = btn.querySelector("i");
+
+            if (bookmarkedPosts.includes(postId)) {
+                icon.classList.remove("ri-bookmark-line");
+                icon.classList.add("ri-bookmark-fill", "text-yellow-500");
+            } else {
+                icon.classList.add("ri-bookmark-line");
+                icon.classList.remove("ri-bookmark-fill", "text-yellow-500");
+            }
+        });
+    }
+
+    // Event toggle bookmark
+    bookmarkButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const postId = btn.getAttribute("data-id");
+
+            if (bookmarkedPosts.includes(postId)) {
+                // Hapus bookmark
+                bookmarkedPosts = bookmarkedPosts.filter((id) => id !== postId);
+            } else {
+                // Tambah bookmark
+                bookmarkedPosts.push(postId);
+            }
+
+            // Simpan ke localStorage
+            localStorage.setItem(bookmarksKey, JSON.stringify(bookmarkedPosts));
+
+            // Update icon
+            updateBookmarkIcons();
+        });
+    });
+
+    // Set icon saat load
+    updateBookmarkIcons();
 </script>
 @endsection

@@ -3,6 +3,7 @@
     <div
         class="flex flex-col md:flex-row items-center justify-between mb-10 space-y-4 md:space-y-0 md:space-x-4"
     >
+        <!-- Search -->
         <form
             action="{{ url('/') }}"
             method="GET"
@@ -99,7 +100,7 @@
                     >
                         <a
                             href="{{ url('/') }}"
-                            class="mt-2 block text-center bg-gray-300 hover:bg-gray-400 text-gray-800 dark:text-gray-200 py-1 rounded"
+                            class="mt-2 block text-center bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 text-gray-800 dark:text-gray-200 py-1 rounded"
                         >
                             Reset
                         </a>
@@ -160,7 +161,8 @@
                             {{ $post["comment_count"] }}
                         </span>
                         <span
-                            class="text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 cursor-pointer"
+                            class="bookmark-toggle text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 cursor-pointer"
+                            data-id="{{ $post['id'] }}"
                         >
                             <i class="ri-bookmark-line"></i>
                         </span>
@@ -260,6 +262,53 @@
             }
         });
     });
+
+    // Bookmark
+    const bookmarksKey = "bookmarked_posts";
+    const bookmarkButtons = document.querySelectorAll(".bookmark-toggle");
+
+    // Ambil data bookmark dari localStorage
+    let bookmarkedPosts = JSON.parse(localStorage.getItem(bookmarksKey)) || [];
+
+    // Fungsi untuk update tampilan icon bookmark
+    function updateBookmarkIcons() {
+        bookmarkButtons.forEach((btn) => {
+            const postId = btn.getAttribute("data-id");
+            const icon = btn.querySelector("i");
+
+            if (bookmarkedPosts.includes(postId)) {
+                icon.classList.remove("ri-bookmark-line");
+                icon.classList.add("ri-bookmark-fill", "text-yellow-500");
+            } else {
+                icon.classList.add("ri-bookmark-line");
+                icon.classList.remove("ri-bookmark-fill", "text-yellow-500");
+            }
+        });
+    }
+
+    // Event toggle bookmark
+    bookmarkButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const postId = btn.getAttribute("data-id");
+
+            if (bookmarkedPosts.includes(postId)) {
+                // Hapus bookmark
+                bookmarkedPosts = bookmarkedPosts.filter((id) => id !== postId);
+            } else {
+                // Tambah bookmark
+                bookmarkedPosts.push(postId);
+            }
+
+            // Simpan ke localStorage
+            localStorage.setItem(bookmarksKey, JSON.stringify(bookmarkedPosts));
+
+            // Update icon
+            updateBookmarkIcons();
+        });
+    });
+
+    // Set icon saat load
+    updateBookmarkIcons();
 </script>
 
 @endsection

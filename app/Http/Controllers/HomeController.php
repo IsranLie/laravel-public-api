@@ -59,7 +59,7 @@ class HomeController extends Controller
             // ===== FILTER =====
             $searchId = request('search_id');
             $searchUser = request('search_user');
-            $search     = request('search'); // search text dari input
+            $search     = request('search');
 
             if ($searchId) {
                 $allData = $allData->where('id', (int)$searchId);

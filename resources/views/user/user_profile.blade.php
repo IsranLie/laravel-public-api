@@ -124,7 +124,7 @@
     <div class="mt-4 grid gap-6 md:grid-cols-1 lg:grid-cols-2">
         @foreach ($posts as $post)
         <div
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition duration-300 flex flex-col md:flex-row h-full"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition duration-300 flex flex-col md:flex-row h-full"
         >
             <div class="md:w-1/3 flex-shrink-0">
                 <img
@@ -143,7 +143,7 @@
                         <h3
                             class="text-xl font-extrabold text-custom-red-950 dark:text-custom-red-300 capitalize mb-2 line-clamp-2"
                         >
-                            {{ $post["id"] }}. {{ $post["title"] }}
+                            {{ $post["title"] }}
                         </h3>
                         <p
                             class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3"
@@ -172,7 +172,8 @@
                             {{ $post["comment_count"] }}
                         </span>
                         <span
-                            class="text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 cursor-pointer"
+                            class="bookmark-toggle text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 cursor-pointer"
+                            data-id="{{ $post['id'] }}"
                         >
                             <i class="ri-bookmark-line"></i>
                         </span>
@@ -197,4 +198,53 @@
         </a>
     </div>
 </div>
+@endsection @section('scripts')
+<script>
+    // Bookmark
+    const bookmarksKey = "bookmarked_posts";
+    const bookmarkButtons = document.querySelectorAll(".bookmark-toggle");
+
+    // Ambil data bookmark dari localStorage
+    let bookmarkedPosts = JSON.parse(localStorage.getItem(bookmarksKey)) || [];
+
+    // Fungsi untuk update tampilan icon bookmark
+    function updateBookmarkIcons() {
+        bookmarkButtons.forEach((btn) => {
+            const postId = btn.getAttribute("data-id");
+            const icon = btn.querySelector("i");
+
+            if (bookmarkedPosts.includes(postId)) {
+                icon.classList.remove("ri-bookmark-line");
+                icon.classList.add("ri-bookmark-fill", "text-yellow-500");
+            } else {
+                icon.classList.add("ri-bookmark-line");
+                icon.classList.remove("ri-bookmark-fill", "text-yellow-500");
+            }
+        });
+    }
+
+    // Event toggle bookmark
+    bookmarkButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const postId = btn.getAttribute("data-id");
+
+            if (bookmarkedPosts.includes(postId)) {
+                // Hapus bookmark
+                bookmarkedPosts = bookmarkedPosts.filter((id) => id !== postId);
+            } else {
+                // Tambah bookmark
+                bookmarkedPosts.push(postId);
+            }
+
+            // Simpan ke localStorage
+            localStorage.setItem(bookmarksKey, JSON.stringify(bookmarkedPosts));
+
+            // Update icon
+            updateBookmarkIcons();
+        });
+    });
+
+    // Set icon saat load
+    updateBookmarkIcons();
+</script>
 @endsection

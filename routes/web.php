@@ -18,7 +18,7 @@ Route::get('/post-create', [PostController::class, 'create'])->name('post.create
 Route::post('/post-store', [PostController::class, 'store'])->name('post.store');
 Route::get('/post-edit/{id}', [PostController::class, 'edit'])->name('post.edit');
 Route::put('/post-update/{id}', [PostController::class, 'update'])->name('post.update');
-Route::get('/post-search', [PostController::class, 'search'])->name('post.search');
+Route::delete('/post-delete/{id}', [PostController::class, 'delete'])->name('post.delete');
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
