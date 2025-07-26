@@ -72,6 +72,6 @@ class HomeController extends Controller
             Log::error("HTTP Request gagal: " . $e->getMessage());
         }
 
-        return view('home', compact('title', 'data'));
+        return view('home/home', compact('title', 'data'));
     }
 }

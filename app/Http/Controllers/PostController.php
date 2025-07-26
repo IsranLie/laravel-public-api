@@ -75,7 +75,7 @@ class PostController extends Controller
             Log::error("HTTP Request gagal: " . $e->getMessage());
         }
 
-        return view('post', compact('title', 'data'));
+        return view('post/post', compact('title', 'data'));
     }
 
     public function show($id)
@@ -124,6 +124,14 @@ class PostController extends Controller
             abort(500, "Gagal memuat data.");
         }
 
-        return view('post_detail', compact('title', 'postData', 'comments'));
+        return view('post/post_detail', compact('title', 'postData', 'comments'));
     }
+
+    public function create()
+    {
+        $title = 'Post Create';
+        return view('post/post_create', compact('title'));
+    }
+
+    public function store() {}
 }

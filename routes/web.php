@@ -14,6 +14,8 @@ use App\Http\Controllers\UserController;
 Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('/posts', [PostController::class, 'index'])->name('posts');
 Route::get('/post-detail/{id}', [PostController::class, 'show'])->name('post.detail');
+Route::get('/post-create', [PostController::class, 'create'])->name('post.create');
+Route::post('/post-store', [PostController::class, 'store'])->name('post.store');
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');

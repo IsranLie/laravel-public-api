@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserController extends Controller
 {
@@ -31,7 +29,7 @@ class UserController extends Controller
             $data = [];
         }
 
-        return view('user', compact('title', 'data'));
+        return view('user/user', compact('title', 'data'));
     }
 
     public function show($id)
@@ -75,6 +73,6 @@ class UserController extends Controller
             Log::error("HTTP Request gagal: " . $e->getMessage());
         }
 
-        return view('user_profile', compact('title', 'user', 'posts'));
+        return view('user/user_profile', compact('title', 'user', 'posts'));
     }
 }

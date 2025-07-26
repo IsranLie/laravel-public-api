@@ -1,4 +1,5 @@
 @extends('app') @section('content')
+<!-- Breadcrumb -->
 <nav
     class="flex items-center text-md text-gray-600 dark:text-gray-300 mb-2 ml-2 md:ml-0"
     aria-label="Breadcrumb"
@@ -15,17 +16,20 @@
         <li>
             <div class="flex items-center">
                 <i class="ri-arrow-right-s-line mx-1 text-gray-400"></i>
-                <a href="{{ route('users') }}" class="hover:text-custom-red-500"
-                    >Users</a
+                <a
+                    href="{{ route('users') }}"
+                    class="hover:text-custom-red-500"
                 >
+                    Users
+                </a>
             </div>
         </li>
         <li aria-current="page">
             <div class="flex items-center">
                 <i class="ri-arrow-right-s-line mx-1 text-gray-400"></i>
-                <span class="text-gray-400 dark:text-gray-500"
-                    >User Profile</span
-                >
+                <span class="text-gray-400 dark:text-gray-500">
+                    User Profile
+                </span>
             </div>
         </li>
     </ol>

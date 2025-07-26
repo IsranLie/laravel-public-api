@@ -5,7 +5,7 @@
         class="flex flex-col md:flex-row items-center justify-between mb-10 space-y-4 md:space-y-0 md:space-x-4"
     >
         <a
-            href="#"
+            href="{{ route('post.create') }}"
             class="flex-shrink-0 bg-custom-red-600 hover:bg-custom-red-700 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center space-x-2"
         >
             <!-- <i class="ri-edit-box-line text-lg"></i> -->
