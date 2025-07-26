@@ -70,5 +70,7 @@ This project designed with the latest web browsers in mind. Recommended that you
 ### Screen Capture
 
 ##### Desktop View:
+<img width="1300" height="1460" alt="screencapture-127-0-0-1-8000-2025-07-26-17_01_58" src="https://github.com/user-attachments/assets/9be76373-b245-4a5c-b167-c89a06cb6299" />
 
 ##### Mobile View:
+<img width="313" height="594" alt="image" src="https://github.com/user-attachments/assets/3d596e75-b2f7-42b1-8917-3f5aec8e47c4" />
