@@ -5,18 +5,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <link rel="icon" type="image/svg" href="{{ asset('img/fire.svg') }}" />
+        <meta property="og:title" content="Larapi" />
+        <meta property="og:type" content="website" />
+        <meta name="keywords" content="larapi, api, laravel" />
+        <meta
+            name="description"
+            content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat aut, explicabo nihil sapiente beatae natus nam consectetur voluptates dicta harum."
+        />
+        <meta
+            property="og:description"
+            content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat aut, explicabo nihil sapiente beatae natus nam consectetur voluptates dicta harum."
+        />
+
         <title>
             {{ $title ? $title.' | '. config("app.name") : config("app.name")}}
         </title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <!-- Fonts -->
-        <!-- <link rel="preconnect" href="https://fonts.bunny.net" />
-        <link
-            href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap"
-            rel="stylesheet"
-        /> -->
     </head>
     <body
         class="antialiased figtree bg-gray-50 dark:bg-gray-800 text-gray-800 flex flex-col min-h-screen"
