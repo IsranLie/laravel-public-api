@@ -94,3 +94,7 @@ This project designed with the latest web browsers in mind. Recommended that you
 ##### Mobile View:
 
 <img width="313" height="594" alt="image" src="https://github.com/user-attachments/assets/3d596e75-b2f7-42b1-8917-3f5aec8e47c4" />
+
+##### Demo Video
+
+https://github.com/user-attachments/assets/f02c4f9e-c849-486a-bc3d-3ac261a1d850
